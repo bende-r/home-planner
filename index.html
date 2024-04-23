@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body onload="main()">
+    <div class="nav-bar">
+<!-- Кнопка для сохранения массива в JSON файл -->
+  <button onclick="saveToJson()">Save to JSON</button>
+  
+  <!-- Поле для загрузки JSON файла -->
+  <input type="file" id="fileInput">
+      <div class="pane-nav">
+        <div class="accordion">
+          <div class="size">
+            <div class="upside-menu">
+              <i class="fas fa-arrow-left" style="position: left"></i>
+              <i class="fas fa-times-circle" style="position: right"></i>
+            </div>
+            <ul class="list run-animation"></ul>
+          </div>
+          <a href="#" class="field" name="rooms">
+            <i class="fas fa-cube"></i>
+          </a>
+          <br />
+          <a href="#" class="field" name="furniture">
+            <i class="fas fa-couch"></i>
+          </a>
+          <br />
+        </div>
+      </div>
+
+      <a href="#" class="top-view" onClick="topView();">set top view</a>
+      <a href="#" class="top-view" onClick="resetView();">reset view</a>
+      <a
+        id="disable-collision"
+        href="#"
+        class="top-view"
+        onClick="disableCollision();"
+      >
+        disable collision
+      </a>
+    </div>
+
+    <div class="homepage">
+      <canvas
+        id="my-canvas"
+        class="my-canvas"
+        width="1600;"
+        height="900"
+        style="background-color: #e7f9ff"
+      >
+        No Canvas Element support on your browser!
+      </canvas>
+    </div>
+
+    <span class="open light-icon">
+      <i class="fas fa-lightbulb"></i>
+    </span>
+
+    <div class="options-menu run-animation" id="lights-menu">
+      <span id="close">
+        <i class="fa fa-times" aria-hidden="true"></i>
+      </span>
+
+      <td style="background-color: white; font-family: courier; padding: 5px">
+        <div id="options">
+          <p>
+            <b> Light </b>
+          </p>
+          <form>
+            <input
+              type="radio"
+              name="light"
+              id="yesl"
+              onchange="updateLightType(this.value);"
+              value="1"
+              checked
+            />
+            Directional
+            <br />
+            <input
+              type="radio"
+              name="light"
+              onchange="updateLightType(this.value);"
+              value="2"
+            />
+            Point <br />
+            <input
+              type="radio"
+              name="light"
+              onchange="updateLightType(this.value);"
+              value="4"
+            />
+            Spot <br />
+            <input
+              type="radio"
+              name="light"
+              id="nol"
+              onchange="updateLightType(this.value);"
+              value="5"
+            />
+            No <br />
+          </form>
+          <!-- <p>
+            <b> Texture Influence </b>
+          </p> -->
+          <div id="slider1" style="display: none">
+            0
+            <input
+              id="slide1"
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value="1"
+              onchange="updateTextureInfluence(this.value);"
+            />
+            1 <br />
+          </div>
+          <p>
+            <b> Ambient Light Influence </b>
+          </p>
+          <div id="slider1">
+            0
+            <input
+              id="slide2"
+              type="range"
+              min="0"
+              max="1"
+              step="0.1"
+              value="0.1"
+              onchange="updateAmbientLightInfluence(this.value);"
+            />
+            1 <br />
+            <p>
+              <b> Ambient Light Color</b>
+            </p>
+            <p>
+              <input
+                id="colorPicker"
+                type="color"
+                value="#FFFFFF"
+                onchange="updateAmbientLightColor(this.value);"
+              />
+            </p>
+          </div>
+          <!-- <p>
+            <b> Emission Influence </b>
+          </p> -->
+          <div id="slider1" style="display: none">
+            0
+            <input
+              id="slide2"
+              type="range"
+              min="0"
+              max="1"
+              step="0.1"
+              value="0.1"
+              onchange="updateEmitInfluence(this.value);"
+            />
+            1 <br />
+          </div>
+        </div>
+      </td>
+    </div>
+  </body>
+</html>
+
+<script>
+  var lightsMenu = document.getElementById("lights-menu");
+  var span = document.getElementsByClassName("open")[0];
+
+  span.onclick = function () {
+    lightsMenu.style.display = "block";
+  };
+  close = document.getElementById("close");
+
+  close.onclick = function () {
+    lightsMenu.style.display = "none";
+  };
+
+  var legend = document.getElementById("legend");
+</script>
+
+<script src="lib/jquery-3.5.1.js"></script>
+<!-- <script src="parallel.js"></script> -->
+<script src="webgl-debug.js"></script>
+<script type="text/javascript" src="utils.js"></script>
+<script type="text/javascript" src="app.js"></script>
+<script type="text/javascript" src="model.js"></script>
+<script type="text/javascript" src="handler.js"></script>
+<script type="text/javascript" src="help.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript" src="collision.js"></script>
+
+<script
+  src="https://kit.fontawesome.com/7e8e0cf498.js"
+  crossorigin="anonymous"
+></script>
+<script>
+  document.getElementById('fileInput').addEventListener('change', handleFileSelect, false);
+</script>
