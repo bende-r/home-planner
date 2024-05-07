@@ -1,11 +1,3 @@
-function openPopup() {
-  document.getElementById("test").style.display = "block";
-}
-
-function closePopup() {
-  document.getElementById("test").style.display = "none";
-}
-
 function requestCORSIfNotSameOrigin(img, url) {
   if (new URL(url).origin !== window.location.origin) {
     img.crossOrigin = "";
@@ -34,9 +26,9 @@ function getTexture(image_URL) {
   return image;
 }
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+// function sleep(ms) {
+//   return new Promise((resolve) => setTimeout(resolve, ms));
+// }
 
 function read_prop(obj, prop) {
   return obj[prop];
@@ -140,7 +132,7 @@ function checkCollisionColorChange(objectA, objectB) {
   //   loadedObjects[i].isCollided = false;
   //   loadedObjects[j].isCollided = false;
   // }
-  
+
   const matchingObjectsA = loadedObjects.filter(
     (item) => item.u_id === objectA.u_id
   );

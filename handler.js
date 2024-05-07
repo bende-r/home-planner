@@ -66,11 +66,23 @@ function doDoubleClick(event) {
         }
       }
     });
+  } else {
+    loadedObjects.forEach((i) => {
+      //  if (i.isFurniture) {
+      i.isSelected = false;
+      currentControlledObject = null;
+      //    playAudio(doubleClick);
+      //   }
+    });
   }
 }
 
 //a sound to notice the user that the object that is double clicked is selected
 var doubleClick = "/music/selection.wav";
+var deleteClick = "/music/29941.mp3";
+var objectSpawn = "/music/30050.mp3";
+var doorSpawn = "/music/door.mp4";
+
 function playAudio(url) {
   new Audio(url).play();
 }
@@ -118,8 +130,10 @@ function onKeyDown(event) {
     } else if (event.key == "i") {
       newPosition.currentMoveY -= movementAlongAxis * deltaTime;
     } else if (event.key == "Delete") {
+      playAudio(deleteClick);
       loadedObjects.splice(loadedObjects.indexOf(currentControlledObject), 1); //deleting the object from the scene
       currentControlledObject = null;
+
       //avoid checking collision if the object was deleted
       return;
     }
@@ -141,7 +155,7 @@ function onKeyDown(event) {
       },
     };
 
- //   checkCollisionColorChange1(currentControlledObject.u_id, objectB);
+    //   checkCollisionColorChange1(currentControlledObject.u_id, objectB);
 
     if (!collisionDisabled) {
       if (!checkCollision(currentControlledObject.u_id, objectB)) {

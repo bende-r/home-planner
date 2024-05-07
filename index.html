@@ -4,12 +4,19 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body onload="main()">
+    <audio autoplay loop>
+      <source src="music/Richard Bone - Vesperia Part Three.mp3" type="audio/mp3" />
+      Ваш браузер не поддерживает аудио элемент.
+    </audio>
+
     <div class="nav-bar">
-<!-- Кнопка для сохранения массива в JSON файл -->
-  <button onclick="saveToJson()">Save to JSON</button>
-  
-  <!-- Поле для загрузки JSON файла -->
-  <input type="file" id="fileInput">
+      <!-- Кнопка для сохранения массива в JSON файл -->
+      <button onclick="saveToFile()" class="top-view">Save to JSON</button>
+
+      <!-- Поле для загрузки JSON файла -->
+      <input type="file" id="fileInput" class="top-view" />
+      <label for="fileInput">Load from file</label>
+
       <div class="pane-nav">
         <div class="accordion">
           <div class="size">
@@ -193,11 +200,14 @@
 <script type="text/javascript" src="help.js"></script>
 <script type="text/javascript" src="menu.js"></script>
 <script type="text/javascript" src="collision.js"></script>
+<script type="text/javascript" src="loadFromToFiles.js"></script>
 
 <script
   src="https://kit.fontawesome.com/7e8e0cf498.js"
   crossorigin="anonymous"
 ></script>
 <script>
-  document.getElementById('fileInput').addEventListener('change', handleFileSelect, false);
+  document
+    .getElementById("fileInput")
+    .addEventListener("change", handleFileSelect, false);
 </script>

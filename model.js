@@ -15,15 +15,42 @@ var decor = "decor";
 var tool = "tool";
 
 var objectsList = {
-  "Rectangular room": { location: "empty_room/room_rect.json", type: room },
-  "Square room": { location: "empty_room/square_room.json", type: room },
-  "Recessed room": { location: "empty_room/room_elle.json", type: room },
-  Bed: { location: "bed/bed.json", type: furniture, place: bedroom },
+  "Rectangular room": {
+    location: "empty_room/room_rect.json",
+    type: room,
+  },
+  "Square room": {
+    location: "empty_room/square_room.json",
+    type: room,
+  },
+  "Recessed room": {
+    location: "empty_room/room_elle.json",
+    type: room,
+  },
+  Bed: {
+    location: "bed/bed.json",
+    type: furniture,
+    place: bedroom,
+  },
   Wardrobe: {
     location: "wardrobe/wardrobe.json",
     type: furniture,
     place: bedroom,
   },
+
+  "White window": {
+    location: "window_white/white_window.json",
+    type: furniture,
+    place: decor,
+  },
+
+ 
+  "Wooden door": {
+    location: "wooden_door/wooden_door.json",
+    type: furniture,
+    place: decor,
+  },
+
   Sideboard: {
     location: "sideboard/sideboard.json",
     type: furniture,

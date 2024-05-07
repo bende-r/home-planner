@@ -1,12 +1,3 @@
-/**
- * The detection of collision is implemented using a technique called OBB (Oriented Bounding Boxes) collision detection.
- * The theorem behind is SAT-Separating axis theorem. For reference: https://en.wikipedia.org/wiki/Hyperplane_separation_theorem
- **/
-
-// check if there's a separating plane in between the selected axes
-// box1, box2 are the bounding boxes build around the objects coords (the box is the smallest possible that can encapsulate the object)
-// Plane is the one that is checked to exist or not between the boxes
-// Rpos is the difference in position between box1, and box2
 function getSeparatingPlane(RPos, Plane, box1, box2) {
   return (
     Math.abs(utils.dotVector(RPos, Plane)) >

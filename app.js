@@ -84,7 +84,6 @@ var rotationMatrixHandle = new Array();
 
 var loadedObjects = new Array(); //array to manage the loaded objects
 
-
 var collisionColorObjects = [];
 
 var isCollidedLoc;
@@ -100,11 +99,14 @@ var lightDirection = [
 
 var objectSpecularPower = 20.0;
 
-var lightPosition = [0.0, 6.0, 0.0];
+var lightPosition = [6.0, 6.0, 0.0];
 var lightColor = new Float32Array([1.0, 1.0, 1.0, 1.0]);
 
 let lastCollisionCheckTime = 0;
 const collisionCheckInterval = 1000 / 2; // Check collisions every 2 seconds (adjust as needed)
+
+// Получаем ссылку на элемент audio
+var audio = document.querySelector("audio");
 
 function main() {
   // Setup the webGL context
@@ -142,147 +144,40 @@ function main() {
     alert("Error: WebGL not supported by your browser!");
   }
 }
-function restoreWebGLResources() {
-  // Пример восстановления буферов вершин
-  for (let i = 0; i < loadedObjects.length; i++) {
-    const todraw = loadedObjects[i];
 
-    // Создание нового буфера вершин
-    const vertexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array(todraw.vertices),
-      gl.STATIC_DRAW
-    );
+document.addEventListener("DOMContentLoaded", function () {
+  var audio = document.querySelector("audio");
+  audio.play().catch(function (error) {
+    console.error("Autoplay was prevented:", error);
+    // Попробуйте начать воспроизведение аудио после того, как пользователь сделает первый клик на странице
+    document.addEventListener(
+      "click",
+      function () {
+        audio
+          .play()
+          .then(function () {
+            console.log("Audio is playing");
+          })
+          .catch(function (error) {
+            console.error("Error starting audio:", error);
+          });
+      },
+      { once: true }
+    ); // Обработчик события сработает только один раз
+  });
+});
 
-    // Сохранение нового буфера вершин в объекте todraw
-    todraw.vertexBufferObjectId = vertexBuffer;
-  }
+// Включаем аудио
+function playAudio() {
+  audio.play();
 }
 
-// function handleFileSelect(event) {
-//   const file = event.target.files[0];
-//   if (!file) return;
-//   const reader = new FileReader();
-//   reader.onload = function (e) {
-//     const contents = e.target.result;
-//     const parsedData = JSON.parse(contents);
-//     console.log(parsedData);
-//     loadedObjects = parsedData; // Загрузка массива обратно в приложение
-
-//     // Произведите восстановление WebGL ресурсов после загрузки JSON
-//     restoreWebGLResources();
-//   };
-//   reader.readAsText(file);
-// }
-
-function handleFileSelect(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const contents = e.target.result;
-    const parsedData = JSON.parse(contents, reviver);
-    console.log(parsedData);
-    loadedObjects = parsedData;
-
-    // Произведите восстановление WebGL ресурсов после загрузки JSON
-    restoreWebGLResources();
-  };
-  reader.readAsText(file);
+// Выключаем аудио
+function pauseAudio() {
+  audio.pause();
 }
-
-// Функция reviver для восстановления WebGLBuffer из строки
-function reviver(key, value) {
-  if (value && typeof value === "object" && value.type === "WebGLBuffer") {
-    // Произвести восстановление WebGLBuffer из строки или другой формы
-    return "<WebGLBuffer data>";
-  }
-  return value;
-}
-
-
-function saveToFile() {
-  const dataToSave = JSON.stringify(loadedObjects, replacer, 2);
-  const blob = new Blob([dataToSave], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "saved_data.json";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-// Функция replacer для сериализации объектов с WebGLBuffer
-function replacer(key, value) {
-  if (value instanceof WebGLBuffer) {
-    // Преобразование WebGLBuffer в строку или другую форму
-    return { type: "WebGLBuffer", data: "<WebGLBuffer data>" };
-  }
-  return value;
-}
-
-
-// function handleFileSelect(event) {
-//   const file = event.target.files[0];
-//   if (!file) return;
-//   const reader = new FileReader();
-//   reader.onload = function (e) {
-//     const contents = e.target.result;
-//     const parsedData = JSON.parse(contents);
-//     console.log(parsedData);
-//     loadedObjects = parsedData; // Загрузка массива обратно в приложение
-//   };
-//   reader.readAsText(file);
-// }
-
-// function saveToJson() {
-//   const jsonData = JSON.stringify(loadedObjects, null, 2);
-//   const blob = new Blob([jsonData], { type: "application/json" });
-//   const url = URL.createObjectURL(blob);
-//   const link = document.createElement("a");
-//   link.href = url;
-//   link.download = "loadedObjects.json";
-//   document.body.appendChild(link);
-//   link.click();
-//   document.body.removeChild(link);
-// }
-
-function checkCollisionsRecursiveFunction() {
-  if (loadedObjects.filter((obj) => obj.isFurniture == true).length >= 2)
-    checkCollisions();
-
-  checkSelected();
-  setTimeout(checkCollisionsRecursiveFunction, 10);
-}
-
-function checkCollisions() {
-  const numObjects = loadedObjects.length;
-  // Перебираем все пары объектов, чтобы проверить коллизии
-  for (let i = 0; i < numObjects; i++) {
-    for (let j = i + 1; j < numObjects; j++) {
-      // Начинаем с j = i + 1, чтобы избежать повторной проверки
-      checkCollisionColorChange(loadedObjects[i], loadedObjects[j]);
-    }
-  }
-}
-
-function checkSelected() {
-  const numObjects = loadedObjects.length;
-
-  for (let i = 0; i < numObjects; i++) {
-    if (currentControlledObject != null)
-      if (currentControlledObject.u_id != loadedObjects[i].u_id)
-        loadedObjects[i].isSelected = false;
-  }
-}
-
-checkCollisionsRecursiveFunction();
+playAudio();
+recursiveFunction();
 
 function loadModel(modelName) {
   if (!modelName) return false;
@@ -439,7 +334,7 @@ function loadModel(modelName) {
       objectModel.materials[meshMatIndex].properties[
         specularColorPropertyIndex
       ].value;
-    console.log("Specular: " + specularColor[i]);
+    //  console.log("Specular: " + specularColor[i]);
     vertexBufferObjectId[i] = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBufferObjectId[i]);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(objVertex), gl.STATIC_DRAW);
@@ -465,6 +360,7 @@ function loadModel(modelName) {
   //currentN are used to sum up all the transformation applied to the object, instead the origin of the object remains fixed. This could be helpful to allow a reset series of transformation applied. The origin is used also to apply the transformation around the middle of the object.
   loadedObjects.push({
     u_id: id,
+    modelName: modelName,
     isRoom: objectCharacteristics.type == room,
     isFurniture: objectCharacteristics.type == furniture,
     isSolid: objectCharacteristics.type == solid,
@@ -609,7 +505,6 @@ function drawScene() {
       }
       //Used to rotate object around its center using "q-e"
       if (todraw.currentRotation) {
-        debugger;
         viewMatrix = utils.multiplyMatrices(
           viewMatrix,
           utils.MakeTranslateMatrix(
@@ -889,9 +784,6 @@ function drawScene() {
   window.requestAnimationFrame(drawScene);
 }
 
-/**
- * The function that loads the shaders
- **/
 function loadShaders() {
   utils.loadFiles(
     [
@@ -1003,4 +895,33 @@ function loadShaders() {
   positionHandle = gl.getAttribLocation(shaderProgram[2], "b_position");
   isCollidedLoc = gl.getUniformLocation(shaderProgram[0], "isCollided");
   isSelectedLoc = gl.getUniformLocation(shaderProgram[0], "isSelected");
+}
+
+function recursiveFunction() {
+  if (loadedObjects.filter((obj) => obj.isFurniture == true).length >= 2)
+    checkCollisions();
+
+  checkSelected();
+  setTimeout(recursiveFunction, 10);
+}
+
+function checkCollisions() {
+  const numObjects = loadedObjects.length;
+  // Перебираем все пары объектов, чтобы проверить коллизии
+  for (let i = 0; i < numObjects; i++) {
+    for (let j = i + 1; j < numObjects; j++) {
+      // Начинаем с j = i + 1, чтобы избежать повторной проверки
+      checkCollisionColorChange(loadedObjects[i], loadedObjects[j]);
+    }
+  }
+}
+
+function checkSelected() {
+  const numObjects = loadedObjects.length;
+
+  for (let i = 0; i < numObjects; i++) {
+    if (currentControlledObject != null)
+      if (currentControlledObject.u_id != loadedObjects[i].u_id)
+        loadedObjects[i].isSelected = false;
+  }
 }

@@ -4,6 +4,35 @@
   user-select: none;
 }
 
+input[type="file"] {
+  /* Скрываем стандартный элемент стиля */
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+input[type="file"] + label {
+  border: none;
+  background: #404040;
+  font-family: "Courier New", Courier, "Lucida Sans Typewriter",
+    "Lucida Typewriter", monospace;
+  margin: 1em;
+  text-decoration: none;
+  text-align: center;
+  text-transform: uppercase;
+  border-radius: 6px;
+  transition: all 0.1s ease 0s;
+  font-size: 1.25em;
+  font-weight: 700;
+  color: white;
+  display: inline-block;
+  cursor: pointer;
+  padding: 0.5em 1em;
+}
+
 .options-menu > * {
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */

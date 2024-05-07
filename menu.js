@@ -67,6 +67,8 @@
 		</ul>\
         <li onclick="openFurniture(4)">Decor</li>\
 		<ul id="decor" style="display:none">\
+    <li>Wooden door</li>\
+    <li>White window</li>\
 		<li>Picture</li>\
 		<li>Car model</li>\
 		</ul>\
@@ -90,6 +92,11 @@
         obj.find(".list li").click(function () {
           var toLoad = $(this)[0].innerHTML;
           if (loadModel(toLoad)) {
+            if (toLoad == "Wooden door") {
+              playAudio(doorSpawn);
+            } else {
+              playAudio(objectSpawn);
+            }
             obj.find(".list").fadeOut(300);
             submenuVisibility = false;
           }
