@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
           });
       },
       { once: true }
-    ); // Обработчик события сработает только один раз
+    );
   });
 });
 
@@ -176,6 +176,7 @@ function playAudio() {
 function pauseAudio() {
   audio.pause();
 }
+
 playAudio();
 recursiveFunction();
 
@@ -265,14 +266,13 @@ function loadModel(modelName) {
         specularColorPropertyIndex = n;
     }
 
-    //*** Getting vertex and normals
     var objVertex = [];
     for (n = 0; n < objectModel.meshes[i].vertices.length / 3; n++) {
       var x = objectModel.meshes[i].vertices[n * 3];
       var y = objectModel.meshes[i].vertices[n * 3 + 1];
       var z = objectModel.meshes[i].vertices[n * 3 + 2];
       objVertex.push(x, y, z);
-      //these if's are used to determine how big the object is
+
       if (x < minVertX) minVertX = x;
       if (x > maxVertX) maxVertX = x;
 
@@ -281,7 +281,7 @@ function loadModel(modelName) {
 
       if (z < minVertZ) minVertZ = z;
       if (z > maxVertZ) maxVertZ = z;
-      //used to have the grid at the beginning
+
       if (objectCharacteristics.type == solid) {
         objVertex.push(0.0, 0.0, 0.0, 0.0, 0.0);
       } else {
@@ -322,7 +322,6 @@ function loadModel(modelName) {
     } else {
       nTexture[i] = false;
     }
-    //*** mesh color
     diffuseColor[i] =
       objectModel.materials[meshMatIndex].properties[
         diffuseColorPropertyIndex
@@ -334,7 +333,6 @@ function loadModel(modelName) {
       objectModel.materials[meshMatIndex].properties[
         specularColorPropertyIndex
       ].value;
-    //  console.log("Specular: " + specularColor[i]);
     vertexBufferObjectId[i] = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBufferObjectId[i]);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(objVertex), gl.STATIC_DRAW);
@@ -356,8 +354,6 @@ function loadModel(modelName) {
       gl.STATIC_DRAW
     );
   }
-  //push all the required info about a loaded model, used to computations when applying transformations to the object etc
-  //currentN are used to sum up all the transformation applied to the object, instead the origin of the object remains fixed. This could be helpful to allow a reset series of transformation applied. The origin is used also to apply the transformation around the middle of the object.
   loadedObjects.push({
     u_id: id,
     modelName: modelName,
@@ -404,22 +400,16 @@ function drawScene() {
   elapsed = now - then;
   deltaTime = elapsed / 1000.0; //smooth
 
-  const colisiondeltaTime = now - lastCollisionCheckTime;
-
   if (now - one_second > 1000) {
     display_fps = frame / (now - one_second);
 
     frame = 0;
     one_second = Date.now();
   }
-  // if enough time has elapsed, draw the next frame
 
   if (elapsed > fpsInterval) {
-    // Get ready for next frame by setting then=now, but also adjust for your
-    // specified fpsInterval not being a multiple of RAF's interval (16.7ms)
     then = now - (elapsed % fpsInterval);
 
-    // drawing code here
     frame++;
     if (loadedObjects.length) {
       utils.resizeCanvasToDisplaySize(gl.canvas);
@@ -434,23 +424,17 @@ function drawScene() {
       cy = lookRadius * Math.sin(utils.degToRad(-elevation));
       eyeTemp = [cx, cy, cz];
 
-      // ------ Draw the objects to the texture --------
-
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      //picking shader. It is faster since using the GPU avoiding doing it in JS
+
       drawObjects(2);
 
-      /**
-       * Figure out what pixel is under the mouse and read it
-       * get the coordinates where the mouse is pointing
-       **/
       const pixelX = (mouseX * gl.canvas.width) / gl.canvas.clientWidth;
       const pixelY =
         gl.canvas.height -
         (mouseY * gl.canvas.height) / gl.canvas.clientHeight -
         1;
       const data = new Uint8Array(4);
-      //read the pixel where the mouse is pointing
+
       gl.readPixels(
         pixelX, // x
         pixelY, // y
@@ -462,13 +446,9 @@ function drawScene() {
       ); // typed array to hold result
       underMouseCursorID =
         data[0] + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
-      //console.log("reading pixel " + pixelX + " " + pixelY + " yields" + data);
-
-      // ------ Draw the objects to the canvas
 
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-      //drawSkyBox();
       drawObjects(currentShader);
     }
   }
@@ -480,7 +460,6 @@ function drawScene() {
     loadedObjects.forEach((todraw) => {
       viewMatrix = utils.MakeView(cx, cy, cz, elevation, -angle);
 
-      //Used to scale the object with "z-x"
       if (todraw.currentScale != 1) {
         viewMatrix = utils.multiplyMatrices(
           viewMatrix,
@@ -503,7 +482,6 @@ function drawScene() {
           )
         );
       }
-      //Used to rotate object around its center using "q-e"
       if (todraw.currentRotation) {
         viewMatrix = utils.multiplyMatrices(
           viewMatrix,
@@ -526,7 +504,6 @@ function drawScene() {
           )
         );
       }
-      //Used to move object using "w-a-s-d-u-i"
       viewMatrix = utils.multiplyMatrices(
         viewMatrix,
         utils.MakeTranslateMatrix(
@@ -708,7 +685,6 @@ function drawScene() {
             4 * 6
           );
 
-          /** DRAWING THE ELEMENTS PASSING ALL THE STUFF TO THE GPU!**/
           gl.drawElements(
             gl.TRIANGLES,
             todraw.facesNumber[i] * 3,
@@ -719,7 +695,6 @@ function drawScene() {
           gl.disableVertexAttribArray(vertexNormalHandle[currentShader]);
           gl.disableVertexAttribArray(vertexUVHandle[currentShader]);
         } else {
-          //Pick shader, to manage the selecting of an object. It creates a shader getting the id of the object, with a uniform color to identify it
           gl.bindBuffer(gl.ARRAY_BUFFER, todraw.vertexBufferObjectId[i]);
           gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, todraw.indexBufferObjectId[i]);
           gl.uniformMatrix4fv(
@@ -731,7 +706,6 @@ function drawScene() {
           if (todraw.type == room) {
             var u_id = new Array(4);
           } else {
-            //bit mask to take an integer and split it in 4 bytes; the id given to the object is split to apply it over the faces of the object
             var u_id = [
               ((todraw.u_id >> 0) & 0xff) / 0xff,
               ((todraw.u_id >> 8) & 0xff) / 0xff,
@@ -768,7 +742,6 @@ function drawScene() {
             0
           );
           gl.enableVertexAttribArray(positionHandle);
-          /** DRAWING THE ELEMENTS PASSING ALL THE STUFF TO THE GPU!**/
           gl.drawElements(
             gl.TRIANGLES,
             todraw.facesNumber[i] * 3,
@@ -796,7 +769,6 @@ function loadShaders() {
     ],
 
     function (shaderText) {
-      // odd numbers are VSs, even are FSs
       var numShader = 0;
       for (i = 0; i < shaderText.length; i += 2) {
         var vertexShader = gl.createShader(gl.VERTEX_SHADER);
@@ -822,7 +794,6 @@ function loadShaders() {
       }
     }
   );
-  //*** Getting the handles to the shaders' vars
   for (i = 0; i < 2; i++) {
     vertexPositionHandle[i] = gl.getAttribLocation(
       shaderProgram[i],
@@ -918,7 +889,6 @@ function checkCollisions() {
 
 function checkSelected() {
   const numObjects = loadedObjects.length;
-
   for (let i = 0; i < numObjects; i++) {
     if (currentControlledObject != null)
       if (currentControlledObject.u_id != loadedObjects[i].u_id)

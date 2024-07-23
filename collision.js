@@ -22,8 +22,6 @@ function getSeparatingPlane(RPos, Plane, box1, box2) {
   );
 }
 
-// test for separating planes in all 15 axes
-// 9+6 axes: 6 for box1 and box2 separately, and 9 because we compute the normal vector to all the possible intersections between box1 and box2 planes
 function getCollision(box1, box2) {
   var RPos;
   RPos = utils.subVector(box2.Pos, box1.Pos);

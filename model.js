@@ -1,7 +1,3 @@
-/**
- * The set of objects of the project, with their type and location
- **/
-
 // Variables for object types
 var room = "room";
 var solid = "solid";
@@ -39,12 +35,11 @@ var objectsList = {
   },
 
   "White window": {
-    location: "window_white/white_window.json",
+    location: "window_white/wide_window.json",
     type: furniture,
     place: decor,
   },
 
- 
   "Wooden door": {
     location: "wooden_door/wooden_door.json",
     type: furniture,
